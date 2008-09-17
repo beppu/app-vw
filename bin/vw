@@ -4,4 +4,5 @@ use strict;
 use warnings;
 use App::VW;
 
+unshift @ARGV, 'help' unless (@ARGV);
 App::VW->dispatch;

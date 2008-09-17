@@ -6,6 +6,11 @@ use base 'App::CLI';
 
 our $VERSION = '0.01';
 
+sub error_cmd {
+  my ($self) = @_;
+  "That command has not been implemented.\n";
+}
+
 1;
 
 __END__
