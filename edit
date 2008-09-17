@@ -1,0 +1,2 @@
+#!/bin/bash
+${1:-vim} -p App/VW.pm App/VW/{Help,Install,Setup,Status,Start,Stop,Restart}.pm
