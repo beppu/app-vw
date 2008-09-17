@@ -21,6 +21,11 @@ sub options {
   )
 }
 
+sub run {
+  my ($self) = @_;
+  print "Not Implmenented, Yet.\n";
+}
+
 1;
 
 __END__
