@@ -1,12 +1,13 @@
 package App::VW::Install;
 use strict;
 use warnings;
-use base 'App::CLI::Command';
+use base 'App::VW::Command';
 use File::ShareDir 'module_dir';
 
 sub options {
+  my ($class) = @_;
   (
-    'verbose|v' => 'verbose',
+    $class->SUPER::options,
   );
 }
 
@@ -20,5 +21,15 @@ sub run {
 =head1 NAME
 
 App::VW::Install - install init script and config dir for vw
+
+=head1 SYNOPSIS
+
+=head1 DESCRIPTION
+
+=head1 API
+
+=head2 App->options
+
+=head2 $vw->run
 
 =cut
