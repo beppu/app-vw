@@ -12,6 +12,7 @@ WriteMakefile(
     'Test::More'      => 0,
     'File::ShareDir'  => 0,
     'App::CLI'        => 0,
+    'YAML'            => 0,
   },
   dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
   clean               => { FILES => 'App-VW-*' },
