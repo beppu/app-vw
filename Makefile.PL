@@ -13,6 +13,7 @@ WriteMakefile(
   },
   dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
   clean               => { FILES => 'App-VW-*' },
+  depend              => { pm_to_blib => 'etc_to_auto' }
 );
 
 sub MY::libscan {
@@ -24,3 +25,9 @@ sub MY::libscan {
   return 0 if /\.sw.$/ || /~$/;
   return $_;
 }
+
+sub MY::postamble {q{
+etc_to_auto :
+	$(CP) -R etc blib/lib/auto/App/VW/
+	$(TOUCH) etc_to_auto
+}}
