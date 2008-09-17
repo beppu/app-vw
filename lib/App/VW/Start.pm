@@ -1,7 +1,7 @@
 package App::VW::Start;
 use strict;
 use warnings;
-use base 'App::CLI::Command';
+use base 'App::VW::Command';
 
 1;
 
