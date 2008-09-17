@@ -9,11 +9,16 @@ WriteMakefile(
   ABSTRACT_FROM       => 'lib/App/VW.pm',
   EXE_FILES           => [ 'bin/vw' ],
   PREREQ_PM => {
-    'Test::More' => 0,
+    'Test::More'      => 0,
+    'File::ShareDir'  => 0,
+    'App::CLI'        => 0,
   },
   dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
   clean               => { FILES => 'App-VW-*' },
-  depend              => { pm_to_blib => 'etc_to_auto' }
+  depend => { 
+    pm_to_blib    => 'etc_to_auto', 
+    clean_subdirs => 'rm_etc_to_auto' 
+  }
 );
 
 sub MY::libscan {
@@ -30,4 +35,6 @@ sub MY::postamble {q{
 etc_to_auto :
 	$(CP) -R etc blib/lib/auto/App/VW/
 	$(TOUCH) etc_to_auto
+rm_etc_to_auto :
+	$(RM) etc_to_auto
 }}
