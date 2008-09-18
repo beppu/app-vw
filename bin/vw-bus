@@ -8,6 +8,15 @@ use Event;
 use AnyEvent;
 use Data::Dump 'pp';
 
+# NEW PLAN
+#   vw-bus (management process) (handles sighup,sigstop,sigchld)
+#   \
+#    +- continuity
+#    +- continuity
+#    +- continuity
+#    +- continuity
+#    +- continuity
+
 $0 = 'vw-bus';
 my $config = App::VW->config;
 my $apps   = App::VW->apps;
@@ -18,7 +27,7 @@ sub continuity_server {
   # never come back
 }
 
-sub daemon {
+sub continuity_daemon {
   my ($app) = @_;
   defined(my $pid = fork)     or die "Can't fork: $!";
   unless ($pid) {
@@ -49,7 +58,7 @@ sub pid_file {
   };
 }
 
-my $pid_files = [ map { pid_file(daemon($_)) } @$apps ];
+my $pid_files = [ map { pid_file(continuity_daemon($_)) } @$apps ];
 
 exit;
 
