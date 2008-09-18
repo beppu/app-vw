@@ -12,8 +12,20 @@ sub options {
   );
 }
 
+our %systems;
+$systems{debian} = {};
+$systems{ubuntu} = $systems{debian};
+$systems{gentoo} = undef;
+$systems{centos} = undef;
+
+sub sys {
+  require Config;
+  Config->import;
+}
+
 sub run {
   my ($self) = @_;
+  my $sys = sys;
   my $src = module_dir('App::VW') . "/etc/init.d/vw-ubuntu";
   my $dst = "/etc/init.d/vw";
   print "Copying $src to $dst .\n" if ($self->{verbose});
