@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use base 'App::CLI';
 use Config;
-use YAML;
+use YAML 'LoadFile';
 
 our $VERSION = '0.01';
 
@@ -20,7 +20,7 @@ sub config {
 sub apps {
   my ($class) = @_;
   my $config = $class->config;
-  my @apps = map { Load($_) } glob("$config->{dir}/*.yml");
+  my @apps = map { LoadFile($_) } sort glob("$config->{dir}/*.yml");
   \@apps;
 }
 

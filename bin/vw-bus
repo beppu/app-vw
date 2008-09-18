@@ -3,20 +3,19 @@
 use strict;
 use warnings;
 use App::VW;
-use List::Util 'reduce';
 use POSIX 'setsid';
+use Event;
 use AnyEvent;
+use Data::Dump 'pp';
 
+$0 = 'vw-bus';
 my $config = App::VW->config;
 my $apps   = App::VW->apps;
 
 sub continuity_server {
   my ($app) = @_;
-  AnyEvent->condvar->cb(sub{
-    my ($cv) = @_;
-    print "will never happen\n";
-    my $data = $cv->recv;
-  });
+  AnyEvent->condvar->recv;
+  # never come back
 }
 
 sub daemon {
@@ -37,10 +36,43 @@ sub daemon {
 
 sub pid_file {
   my ($app, $pid) = @_;
+  my $app_name = lc $app->{app};
+  $app_name =~ s/::/_/g;
+  my $pid_file = "$app->{dir}/${app_name}_$app->{port}.pid";
+  open(PID, "> $pid_file") || die($!);
+  print PID "$pid_file\n";
+  close(PID);
+  return {
+    app  => $app,
+    pid  => $pid,
+    file => $pid_file,
+  };
 }
 
-my @pids = 
-  reduce { push @$a, $b; $a } [], 
-  map    { pid_file(daemon($app)) } @$apps
+my $pid_files = [ map { pid_file(daemon($_)) } @$apps ];
 
 exit;
+
+# /etc/init.d/vw stop
+my $stop = AnyEvent->signal(
+  signal => 'STOP',
+  cb     => sub {
+    warn "kthxbai";
+    for (@$pid_files) {
+      my $pid = $_->{pid};
+      kill 15, $pid;
+      unlink($_->{file});
+    }
+  }
+);
+
+# /etc/init.d/vw reload
+my $reload = AnyEvent->signal(
+  signal => 'HUP',
+  cb     => sub {
+    warn "what would make sense here?";
+    warn pp @$pid_files;
+  }
+);
+
+AnyEvent->condvar->recv;
