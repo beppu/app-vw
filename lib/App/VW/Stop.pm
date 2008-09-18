@@ -10,4 +10,3 @@ use base 'App::VW::Command';
 App::VW::Stop - stop all configured Squatting apps
 
 =cut
-
