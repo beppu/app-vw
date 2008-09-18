@@ -36,10 +36,6 @@ App::VW - a deployment system for Squatting+Continuity web apps
 
 =head1 DESCRIPTION
 
-=head1 API
-
-=head2 App::VW->error_cmd
-
 =head1 AUTHOR
 
 John BEPPU C<< <beppu at cpan.org> >>

@@ -21,10 +21,4 @@ Usage:
 
 =head1 DESCRIPTION
 
-=head1 API
-
-=head2 $vw->run
-
-TODO
-
 =cut
