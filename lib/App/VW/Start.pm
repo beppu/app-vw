@@ -10,4 +10,3 @@ use base 'App::VW::Command';
 App::VW::Start - start all configured Squatting apps
 
 =cut
-

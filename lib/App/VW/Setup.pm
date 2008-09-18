@@ -2,6 +2,7 @@ package App::VW::Setup;
 use strict;
 use warnings;
 use base 'App::VW::Command';
+use YAML;
 
 sub run {
 }
@@ -14,7 +15,9 @@ App::VW::Setup - setup a Squatting app for deployment via Continuity
 
 =head1 SYNOPSIS
 
-TODO
+Usage:
+
+  vw setup [OPTION]... <App>
 
 =head1 DESCRIPTION
 

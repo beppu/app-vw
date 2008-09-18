@@ -8,7 +8,7 @@ our $VERSION = '0.01';
 
 sub error_cmd {
   my ($self) = @_;
-  "That command has not been implemented.\n";
+  "That command does not exist.\n";
 }
 
 package App::VW::Command;
