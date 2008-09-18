@@ -31,12 +31,12 @@ sub daemon {
     continuity_server($app);
   } else {
     select(undef, undef, undef, 0.25);
-    return $pid;
+    return ($app, $pid);
   }
 }
 
 sub pid_file {
-  my ($pid) = @_;
+  my ($app, $pid) = @_;
 }
 
 my @pids = 
