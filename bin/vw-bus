@@ -1,0 +1,46 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use App::VW;
+use List::Util 'reduce';
+use POSIX 'setsid';
+use AnyEvent;
+
+my $config = App::VW->config;
+my $apps   = App::VW->apps;
+
+sub continuity_server {
+  my ($app) = @_;
+  AnyEvent->condvar->cb(sub{
+    my ($cv) = @_;
+    print "will never happen\n";
+    my $data = $cv->recv;
+  });
+}
+
+sub daemon {
+  my ($app) = @_;
+  defined(my $pid = fork)     or die "Can't fork: $!";
+  unless ($pid) {
+    chdir '/'                 or die "Can't chdir to /: $!";
+    open STDIN,  '/dev/null'  or die "Can't read /dev/null: $!";
+    open STDOUT, '>/dev/null' or die "Can't write to /dev/null: $!";
+    setsid                    or die "Can't start a new session: $!";
+    open STDERR, '>&STDOUT'   or die "Can't dup stdout: $!";
+    continuity_server($app);
+  } else {
+    select(undef, undef, undef, 0.25);
+    return $pid;
+  }
+}
+
+sub pid_file {
+  my ($pid) = @_;
+}
+
+my @pids = 
+  reduce { push @$a, $b; $a } [], 
+  map    { pid_file(daemon($app)) } @$apps
+
+exit;

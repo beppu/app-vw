@@ -7,7 +7,7 @@ WriteMakefile(
   AUTHOR              => 'John BEPPU <john.beppu@gmail.com>',
   VERSION_FROM        => 'lib/App/VW.pm',
   ABSTRACT_FROM       => 'lib/App/VW.pm',
-  EXE_FILES           => [ 'bin/vw' ],
+  EXE_FILES           => [ 'bin/vw', 'bin/vw-bus' ],
   PREREQ_PM => {
     'Test::More'      => 0,
     'File::ShareDir'  => 0,

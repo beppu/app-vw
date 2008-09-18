@@ -3,8 +3,26 @@ package App::VW;
 use strict;
 use warnings;
 use base 'App::CLI';
+use Config;
+use YAML;
 
 our $VERSION = '0.01';
+
+our $config = {
+  dir => '/etc/vw',
+};
+
+sub config {
+  my ($class) = @_;
+  $config;
+}
+
+sub apps {
+  my ($class) = @_;
+  my $config = $class->config;
+  my @apps = map { Load($_) } glob("$config->{dir}/*.yml");
+  \@apps;
+}
 
 sub error_cmd {
   my ($self) = @_;
@@ -36,8 +54,10 @@ App::VW - a deployment system for Squatting+Continuity web apps
 
 =head1 DESCRIPTION
 
+Squatting apps are asked to deploy themselves for the volk and the fatherland.
+
 =head1 AUTHOR
 
-John BEPPU C<< <beppu at cpan.org> >>
+John BEPPU C<< <beppu@cpan.org> >>
 
 =cut
