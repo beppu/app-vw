@@ -32,7 +32,13 @@ sub run {
   copy($src, $dst) || die $!;
   print "Making $dst executable.\n" if ($self->{verbose});
   chmod(0755, $dst) || die $!;
-  print "To make vw start at boot, run:  update-rc.d vw defaults\n";
+  print "Creating /etc/vw .\n" if ($self->{verbose});
+  if (! -d "/etc/vw" ) {
+    mkdir "/etc/vw" || die $!;
+  }
+  print "---\n";
+  print "The installation of vw was successful.\n";
+  print "To make vw start upon bootup, run:  sudo update-rc.d vw defaults\n";
   return;
 }
 

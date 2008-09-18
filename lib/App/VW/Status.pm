@@ -10,4 +10,3 @@ use base 'App::VW::Command';
 App::VW::Status - status of each app.  (Is it running or not?)
 
 =cut
-
