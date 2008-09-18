@@ -2,6 +2,7 @@ package App::VW::Install;
 use strict;
 use warnings;
 use base 'App::VW::Command';
+use File::Copy;
 use File::ShareDir 'module_dir';
 
 sub options {
@@ -13,7 +14,14 @@ sub options {
 
 sub run {
   my ($self) = @_;
-  warn "This should copy ".module_dir('App::VW')."/etc/init.d/vw-* to /etc/init.d .\n";
+  my $src = module_dir('App::VW') . "/etc/init.d/vw-ubuntu";
+  my $dst = "/etc/init.d/vw";
+  print "Copying $src to $dst .\n" if ($self->{verbose});
+  copy($src, $dst) || die $!;
+  print "Making $dst executable.\n" if ($self->{verbose});
+  chmod(0755, $dst) || die $!;
+  print "To make vw start at boot, run:  update-rc.d vw defaults\n";
+  return;
 }
 
 1;
