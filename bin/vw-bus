@@ -49,7 +49,7 @@ sub pid_file {
   $app_name =~ s/::/_/g;
   my $pid_file = "$app->{dir}/${app_name}_$app->{port}.pid";
   open(PID, "> $pid_file") || die($!);
-  print PID "$pid_file\n";
+  print PID "$pid\n";
   close(PID);
   return {
     app  => $app,
