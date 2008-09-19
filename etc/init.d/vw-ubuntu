@@ -15,6 +15,7 @@ DAEMON=/usr/local/bin/vw-bus
 NAME=vw
 DESC=vw
 PIDFILE=/var/run/$NAME.pid
+PERL=/usr/bin/perl
 
 test -x $DAEMON || exit 0
 
@@ -29,29 +30,29 @@ case "$1" in
   start)
         echo -n "Starting $DESC: "
         start-stop-daemon --start --quiet --pidfile $PIDFILE \
-                --exec $DAEMON -- $DAEMON_OPTS
+                --exec $PERL --startas $DAEMON -- $DAEMON_OPTS
         echo "$NAME."
         ;;
   stop)
         echo -n "Stopping $DESC: "
         start-stop-daemon --stop --quiet --pidfile $PIDFILE \
-                --exec $DAEMON
+                --exec $PERL --startas $DAEMON
         echo "$NAME."
         ;;
 
   restart|force-reload)
         echo -n "Restarting $DESC: "
         start-stop-daemon --stop --quiet --pidfile \
-                $PIDFILE --exec $DAEMON
+                $PIDFILE --exec $PERL --startas $DAEMON
         sleep 1
         start-stop-daemon --start --quiet --pidfile \
-                $PIDFILE --exec $DAEMON -- $DAEMON_OPTS
+                $PIDFILE --exec $PERL --startas $DAEMON -- $DAEMON_OPTS
         echo "$NAME."
         ;;
   reload)
         echo -n "Reloading $DESC configuration: "
         start-stop-daemon --stop --signal HUP --quiet --pidfile $PIDFILE \
-            --exec $DAEMON
+            --exec $PERL --startas $DAEMON
         echo "$NAME."
         ;;
   *)
