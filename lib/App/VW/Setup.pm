@@ -4,7 +4,6 @@ use warnings;
 use App::VW;
 use base 'App::VW::Command';
 use YAML 'DumpFile';
-use Data::Dump 'pp';
 use Cwd;
 
 my $config = App::VW->config;
