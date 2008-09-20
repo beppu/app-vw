@@ -13,6 +13,8 @@ WriteMakefile(
     'File::ShareDir'  => 0,
     'App::CLI'        => 0,
     'YAML'            => 0,
+    'Time::HiRes'     => 0,
+    'File::Copy'      => 0,
   },
   dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
   clean               => { FILES => 'App-VW-*' },
@@ -33,7 +35,7 @@ sub MY::libscan {
 }
 
 sub MY::postamble {q{
-etc_to_auto : etc/init.d/vw-ubuntu
+etc_to_auto : etc/init.d/vw-ubuntu etc/vw_harness.tmpl
 	$(CP) -R etc $(INST_AUTODIR)
 	$(TOUCH) etc_to_auto
 rm_etc_to_auto :
