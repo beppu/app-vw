@@ -6,6 +6,7 @@ FUTURE
 * Add rudimentary logging to vw-bus (probably via Sys::Syslog).
 * Add a more informative post-install message to `vw install`.
 * Don't hardcode the path to perl in the init scripts.  Use $Config{perlpath}.
+* Optionally downgrade user to someone who isn't root.
 
 0.01 (unreleased)
 - App::VW             - a deployment system for Squatting+Continuity apps.
