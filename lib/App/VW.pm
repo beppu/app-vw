@@ -9,7 +9,9 @@ use YAML 'LoadFile';
 our $VERSION = '0.01';
 
 our $config = {
-  dir => '/etc/vw',
+  etc  => '/etc/vw',
+  perl => $Config{perlpath},
+  init => '/etc/init.d/vw',
 };
 
 sub config {
@@ -20,7 +22,7 @@ sub config {
 
 sub apps {
   my ($class) = @_;
-  my @apps = map { LoadFile($_) } sort glob("$config->{dir}/*.yml");
+  my @apps = map { LoadFile($_) } sort glob("$config->{etc}/*.yml");
   \@apps;
 }
 
@@ -42,6 +44,11 @@ sub options {
 sub run {
   my ($self) = @_;
   print "Not Implmenented, Yet.\n";
+}
+
+sub verbose {
+  my ($self, @message) = @_;
+  print @message, "\n" if ($self->{verbose});
 }
 
 1;

@@ -21,6 +21,7 @@ $systems{centos} = undef;
 sub post_installation_message {
 my ($self) = @_;
 qq|---
+
 The installation of vw was successful.
 
 To start, stop, and restart vw:

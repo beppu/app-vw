@@ -10,9 +10,10 @@ my $config = App::VW->config;
 
 sub run {
   my ($self, $app) = @_;
+  my $cwd = getcwd;
   my $server_description = {
     app          => $app,
-    dir          => getcwd,
+    dir          => $cwd,
     port         => 4000,
     cluster_size => 1,
   };
@@ -21,6 +22,8 @@ sub run {
   my $yaml_file = "$config->{dir}/$app_name.yml";
   print "Creating $yaml_file.\n" if ($self->{verbose});
   DumpFile($yaml_file, $server_description) || die($!);
+  my $harness_file = "$cwd/vw_harness.pl";
+  print "Creating $harness_file.\n" if ($self->{verbose});
 }
 
 1;
@@ -43,8 +46,9 @@ Example:
   # Run the setup command
   sudo vw setup Bavl
 
-  # You should have 1 new file in your system, now:
+  # You should have 2 new files in your system, now:
   /etc/vw/bavl.yml
+  /www/towr.of.bavl.org/vw_harness.pl
 
 =head1 DESCRIPTION
 
