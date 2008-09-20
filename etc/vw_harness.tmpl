@@ -1,0 +1,6 @@
+use strict;
+use warnings;
+use [% app %] [% plugins %] 'On::Continuity';
+App->init;
+App->continue(port => $vw::port);
+# vim:ft=perl
