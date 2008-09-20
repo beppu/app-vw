@@ -6,21 +6,34 @@ use App::VW;
 use POSIX 'setsid';
 # TODO  - Ask Marc Lehman about excessive CPU usage.
 #       - EV and AnyEvent::Impl::Perl eat up a lot of CPU when idle.
+#       - Event is fine, though.
 use Event;
 use AnyEvent;
 use Time::HiRes;
 
-# NEW PLAN
+
+
+# FUNCTION STRUCTURE
+# 
 #   leader_daemon (handles sigint,sighup,(sigchld?))
 #   `- continuity_daemon
-#      `- continuity_server
+#   |  `- continuity_server
 #   `- continuity_daemon
-#      `- continuity_server
+#   |  `- continuity_server
 #   `- continuity_daemon
-#      `- continuity_server
+#   |  `- continuity_server
 #   `- continuity_daemon
 #      `- continuity_server
 #      etc...
+#
+# * Any function with "daemon" has its own OS process.
+# * The leader_daemon watches over the continuity_daemons.
+# * Each continuity_daemon runs one continuity_server.
+# * The continuity_servers need a script called vw_harness.pl
+#   to be in the directory that the Squatting+Continuity app is
+#   being served from.
+
+
 
 # TODO - be aware of $ENV{VW_CONFIG}
 my $config = App::VW->config;
@@ -89,6 +102,7 @@ sub leader_daemon {
 
     # loop forever
     AnyEvent->condvar->recv;
+
   } else {
     select(undef, undef, undef, 0.25);
     return { pid => $pid };
@@ -112,6 +126,6 @@ sub pid_file {
 # main
 #_____________________________________________________________________________
 
-my $md = leader_daemon($config);
-my $pf = pid_file('/var/run/vw.pid', $md->{pid});
+my $ld = leader_daemon($config);
+my $pf = pid_file('/var/run/vw.pid', $ld->{pid});
 
