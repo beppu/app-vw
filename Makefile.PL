@@ -33,7 +33,7 @@ sub MY::libscan {
 }
 
 sub MY::postamble {q{
-etc_to_auto :
+etc_to_auto : etc/init.d/vw-ubuntu
 	$(CP) -R etc $(INST_AUTODIR)
 	$(TOUCH) etc_to_auto
 rm_etc_to_auto :
