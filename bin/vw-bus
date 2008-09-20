@@ -29,13 +29,13 @@ use Time::HiRes;
 # * Any function with "daemon" has its own OS process.
 # * The leader_daemon watches over the continuity_daemons.
 # * Each continuity_daemon runs one continuity_server.
-# * The continuity_servers need a script called vw_harness.pl
-#   to be in the directory that the Squatting+Continuity app is
-#   being served from.
+# * The continuity_servers load a script called vw_harness.pl
+#   that should be located in the document root of the
+#   Squatting+Continuity app.
 
 
 
-# TODO - be aware of $ENV{VW_CONFIG}
+# TODO - become aware of $ENV{VW_CONFIG}
 my $config = App::VW->config;
 
 sub continuity_server {
@@ -44,6 +44,7 @@ sub continuity_server {
   AnyEvent->condvar->recv;
 
   # TODO
+  # - create pid file
   # - require vw_harness.pl
   #   + load modules
   #   + load Squatting::On::Continuity
