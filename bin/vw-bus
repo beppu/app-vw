@@ -11,11 +11,15 @@ use AnyEvent;
 use Time::HiRes;
 
 # NEW PLAN
-#   leader_daemon (handles sigint,sighup,(sigchld?))   | vw-bus driver
-#   `- continuity_daemon                               | `-squatting passenger
-#   `- continuity_daemon                               | `-squatting passenger
-#   `- continuity_daemon                               | `-squatting passenger
-#   `- continuity_daemon                               | `-squatting passenger
+#   leader_daemon (handles sigint,sighup,(sigchld?))
+#   `- continuity_daemon
+#      `- continuity_server
+#   `- continuity_daemon
+#      `- continuity_server
+#   `- continuity_daemon
+#      `- continuity_server
+#   `- continuity_daemon
+#      `- continuity_server
 #      etc...
 
 # TODO - be aware of $ENV{VW_CONFIG}
