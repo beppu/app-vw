@@ -18,27 +18,40 @@ $systems{ubuntu} = $systems{debian};
 $systems{gentoo} = undef;
 $systems{centos} = undef;
 
-sub sys {
-  require Config;
-  Config->import;
-}
+sub post_installation_message {
+my ($self) = @_;
+qq|---
+The installation of vw was successful.
+
+To start, stop, and restart vw:
+
+  sudo /etc/init.d/vw start
+  sudo /etc/init.d/vw stop
+  sudo /etc/init.d/vw restart
+
+To make vw start upon bootup:
+
+  sudo update-rc.d vw defaults
+
+To disable vw from starting upon boot:
+
+  sudo update-rc.d -f vw remove
+
+|};
 
 sub run {
   my ($self) = @_;
-  my $sys = sys;
   my $src = module_dir('App::VW') . "/etc/init.d/vw-ubuntu";
   my $dst = "/etc/init.d/vw";
-  print "Copying $src to $dst .\n" if ($self->{verbose});
-  copy($src, $dst) || die $!;
-  print "Making $dst executable.\n" if ($self->{verbose});
-  chmod(0755, $dst) || die $!;
-  print "Creating /etc/vw .\n" if ($self->{verbose});
+  $self->verbose("Copying $src to $dst .\n");
+  copy($src, $dst) || die "Can't copy file to $dst:  $!";
+  $self->verbose("Making $dst executable.\n");
+  chmod(0755, $dst) || die "Can't make $dst executable: $!";
+  $self->verbose("Creating /etc/vw .\n");
   if (! -d "/etc/vw" ) {
-    mkdir "/etc/vw" || die $!;
+    mkdir "/etc/vw" || die "Can't create /etc/vw: $!";
   }
-  print "---\n";
-  print "The installation of vw was successful.\n";
-  print "To make vw start upon bootup, run:  sudo update-rc.d vw defaults\n";
+  print $self->post_installation_message;
   return;
 }
 
