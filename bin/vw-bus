@@ -40,7 +40,7 @@ sub continuity_daemon {
     chdir '/'                 or die "Can't chdir to /: $!";
     open STDIN,  '/dev/null'  or die "Can't read /dev/null: $!";
     open STDOUT, '>/dev/null' or die "Can't write to /dev/null: $!";
-    # *DON'T* start new session.
+    # *DON'T* start new session => follow the leader
     #setsid                    or die "Can't start a new session: $!";
     open STDERR, '>&STDOUT'   or die "Can't dup stdout: $!";
     continuity_server($app);
