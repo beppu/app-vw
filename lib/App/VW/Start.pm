@@ -5,7 +5,7 @@ use base 'App::VW::Command';
 
 sub run {
   my ($self) = @_;
-  system("sudo /etc/init.d/vw start");
+  system("/etc/init.d/vw start");
 }
 
 1;
