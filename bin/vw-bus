@@ -8,7 +8,6 @@ use POSIX 'setsid';
 #       - EV and AnyEvent::Impl::Perl eat up a lot of CPU when idle.
 use Event;
 use AnyEvent;
-use Data::Dump 'pp';
 use Time::HiRes;
 
 # NEW PLAN
@@ -63,8 +62,6 @@ sub leader_daemon {
 
     # daemons
     my @continuities;
-    use IO::All;
-    use Data::Dump 'pp';
 
     # /etc/init.d/vw stop
     my $stop = AnyEvent->signal(signal => 'INT', cb => sub {
@@ -80,17 +77,11 @@ sub leader_daemon {
     # /etc/init.d/vw reload
     my $reload = AnyEvent->signal(signal => 'HUP', cb => sub {
       # What should it mean to "reload" vw?
-      my @pids = map { $_->{pid} } @continuities;
-      io('/tmp/pids') < join("\n", @pids)."\n";
-      io('/tmp/what') < pp(\@continuities)."\n";
     });
 
-    # TODO - start a bunch of continuity_daemons
-    for (1..4) {
-      push @continuities, continuity_daemon({ n => $_ });
-    }
-
-    io('/tmp/continuities') < pp(\@continuities)."\n";
+    # start a bunch of continuity_daemons
+    my @apps = @{ $config->{apps} };
+    @continuities = map { continuity_daemon($_) } @apps;
 
     # loop forever
     AnyEvent->condvar->recv;
