@@ -14,12 +14,12 @@ our $config = {
 
 sub config {
   my ($class) = @_;
+  $config->{apps} = $class->apps;
   $config;
 }
 
 sub apps {
   my ($class) = @_;
-  my $config = $class->config;
   my @apps = map { LoadFile($_) } sort glob("$config->{dir}/*.yml");
   \@apps;
 }
