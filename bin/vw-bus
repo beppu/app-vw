@@ -9,6 +9,7 @@ use POSIX 'setsid';
 use Event;
 use AnyEvent;
 use Data::Dump 'pp';
+use Time::HiRes;
 
 # NEW PLAN
 #   leader_daemon (handles sigint,sighup,(sigchld?))   | vw-bus driver
@@ -46,7 +47,7 @@ sub continuity_daemon {
     continuity_server($app);
   } else {
     select(undef, undef, undef, 0.25);
-    return ($app, $pid);
+    return { app => $app, pid => $pid };
   }
 }
 
@@ -59,10 +60,19 @@ sub leader_daemon {
     open STDOUT, '>/dev/null' or die "Can't write to /dev/null: $!";
     setsid                    or die "Can't start a new session: $!";
     open STDERR, '>&STDOUT'   or die "Can't dup stdout: $!";
-    # TODO - start a bunch of continuity_daemons
+
+    # daemons
+    my @continuities;
+    use IO::All;
+    use Data::Dump 'pp';
 
     # /etc/init.d/vw stop
     my $stop = AnyEvent->signal(signal => 'INT', cb => sub {
+      my @pids = map { $_->{pid} } @continuities;
+      kill 15 => @pids;
+      sleep 0.25;
+      kill 9 => @pids;
+      sleep 0.25;
       unlink('/var/run/vw.pid');
       exit 0;
     });
@@ -70,7 +80,17 @@ sub leader_daemon {
     # /etc/init.d/vw reload
     my $reload = AnyEvent->signal(signal => 'HUP', cb => sub {
       # What should it mean to "reload" vw?
+      my @pids = map { $_->{pid} } @continuities;
+      io('/tmp/pids') < join("\n", @pids)."\n";
+      io('/tmp/what') < pp(\@continuities)."\n";
     });
+
+    # TODO - start a bunch of continuity_daemons
+    for (1..4) {
+      push @continuities, continuity_daemon({ n => $_ });
+    }
+
+    io('/tmp/continuities') < pp(\@continuities)."\n";
 
     # loop forever
     AnyEvent->condvar->recv;
