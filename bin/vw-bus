@@ -61,6 +61,12 @@ sub management_daemon {
     open STDERR, '>&STDOUT'   or die "Can't dup stdout: $!";
     # TODO - start a bunch of continuity_daemons
     # XXX
+
+    my $stop = AnyEvent->signal(signal => 'INT', cb => sub {
+      unlink('/var/run/vw.pid');
+      exit 0;
+    });
+
     AnyEvent->condvar->recv;
   } else {
     select(undef, undef, undef, 0.25);
@@ -81,25 +87,10 @@ sub pid_file {
   return [$pid_file, $pid];
 }
 
-# /etc/init.d/vw stop
-my $stop = AnyEvent->signal(
-  signal => 'STOP',
-  cb     => sub {
-    warn "kthxbai";
-    #for (@$pid_files) {
-    #  my $pid = $_->{pid};
-    #  kill 15, $pid;
-    #  unlink($_->{file});
-    #}
-  }
-);
-
 # /etc/init.d/vw reload
 my $reload = AnyEvent->signal(
   signal => 'HUP',
   cb     => sub {
-    warn "what would make sense here?";
-    warn pp @$pid_files;
   }
 );
 

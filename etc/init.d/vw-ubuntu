@@ -35,7 +35,7 @@ case "$1" in
         ;;
   stop)
         echo -n "Stopping $DESC: "
-        start-stop-daemon --stop --quiet --pidfile $PIDFILE \
+        start-stop-daemon --stop --signal 2 --quiet --pidfile $PIDFILE \
                 --exec $PERL --startas $DAEMON
         echo "$NAME."
         ;;
