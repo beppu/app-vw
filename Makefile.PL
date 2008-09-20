@@ -4,7 +4,7 @@ use ExtUtils::MakeMaker;
 
 WriteMakefile(
   NAME                => 'App::VW',
-  AUTHOR              => 'John BEPPU <john.beppu@gmail.com>',
+  AUTHOR              => 'John BEPPU <beppu@cpan.org>',
   VERSION_FROM        => 'lib/App/VW.pm',
   ABSTRACT_FROM       => 'lib/App/VW.pm',
   EXE_FILES           => [ 'bin/vw', 'bin/vw-bus' ],
@@ -17,7 +17,7 @@ WriteMakefile(
     'App::CLI'        => 0,
     'AnyEvent'        => 0,
     'Event'           => 0,
-    'Squatting'       => 0.60,
+    'Squatting'       => 0.52,
   },
   dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
   clean               => { FILES => 'App-VW-*' },
