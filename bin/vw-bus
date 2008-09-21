@@ -10,6 +10,7 @@ use POSIX 'setsid';
 use Event;
 use AnyEvent;
 use Time::HiRes;
+use Sys::Syslog qw(:standard :macros);
 
 # FUNCTION STRUCTURE
 # 
@@ -39,38 +40,49 @@ use Time::HiRes;
   sub loop { $_[0]->condvar->recv }
 }
 
-
 # TODO - become aware of $ENV{VW_CONFIG}
 my $config = App::VW->config;
-our $VW_PID_FILE = "/var/run/vw.pid";
 
+# a pid_file 
+sub pid_file {
+  my ($pid_file, $pid) = @_;
+  open(PID, "> $pid_file") || die($!);
+  print PID "$pid\n";
+  close(PID);
+  return [$pid_file, $pid];
+}
 
+# a continuity-based http server
 sub continuity_server {
   my ($app) = @_;
   chdir($app->{dir});
   my $harness = "$app->{dir}/vw_harness.pl";
-  my $pid_file = "$app->{dir}/$app->{port}.pid";
   if (-e $harness) {
-    pid_file($pid_file, $app->{port});
     local @ARGV = ($app->{port});
     eval { do $harness; };
     # ...and never return.
     # But if it fails for some reason...
-    warn $@; # XXX - use a logging facility instead
-    unlink($pid_file);
+    openlog('vw', 'ndelay,pid', LOG_USER);
+    syslog(LOG_ERR, "$app->{app}: $@");
+    closelog();
   }
 }
 
+# a process for continuity to run in
 sub continuity_daemon {
   my ($app) = @_;
-  defined(my $pid = fork)     or die "Can't fork: $!";
+  defined(my $pid = fork) or die "Can't fork: $!";
   unless ($pid) {
     continuity_server($app);
   } else {
-    return { app => $app, pid => $pid };
+    $app->{pid}      = $pid;
+    $app->{pid_file} = "$app->{dir}/$app->{port}.pid";
+    pid_file($app->{pid_file}, $pid);
+    return $app;
   }
 }
 
+# a process for watching over continuity_daemons
 sub leader_daemon {
   my ($config) = @_;
   defined(my $pid = fork)     or die "Can't fork: $!";
@@ -91,7 +103,8 @@ sub leader_daemon {
       sleep 0.25;
       kill 9 => @pids;
       sleep 0.25;
-      unlink($VW_PID_FILE);
+      unlink map { $_->{pid_file} } @continuities;
+      unlink($config->{pid_file});
       exit 0;
     });
 
@@ -119,27 +132,20 @@ sub leader_daemon {
 
   } else {
     select(undef, undef, undef, 0.25);
-    return { pid => $pid };
+    pid_file($config->{pid_file}, $pid);
+    return $config;
   }
 }
+
 
 ### how to construct $pid_file for continuity apps
 # my $app_name = lc $app->{app};
 # $app_name =~ s/::/_/g;
 # my $pid_file = "$app->{dir}/${app_name}_$app->{port}.pid";
 
-sub pid_file {
-  my ($pid_file, $pid) = @_;
-  open(PID, "> $pid_file") || die($!);
-  print PID "$pid\n";
-  close(PID);
-  return [$pid_file, $pid];
-}
-
 
 # main
 #_____________________________________________________________________________
 
 my $ld = leader_daemon($config);
-my $pf = pid_file($VW_PID_FILE, $ld->{pid});
 

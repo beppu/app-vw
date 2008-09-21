@@ -12,6 +12,8 @@ our $config = {
   etc  => '/etc/vw',
   perl => $Config{perlpath},
   init => '/etc/init.d/vw',
+
+  pid_file => '/var/run/vw.pid',
 };
 
 sub config {
