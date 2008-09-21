@@ -11,8 +11,6 @@ use Event;
 use AnyEvent;
 use Time::HiRes;
 
-
-
 # FUNCTION STRUCTURE
 # 
 #   leader_daemon (handles sigint,sighup,(sigchld?))
@@ -26,44 +24,49 @@ use Time::HiRes;
 #      `- continuity_server
 #      etc...
 #
-# * Any function with "daemon" has its own OS process.
+# * Any function with "daemon" in its name has its own OS process.
 # * The leader_daemon watches over the continuity_daemons.
 # * Each continuity_daemon runs one continuity_server.
 # * The continuity_servers load a script called vw_harness.pl
 #   that should be located in the document root of the
 #   Squatting+Continuity app.
 
+# AnyEvent->loop    vs.   AnyEvent->condvar->recv
+# "any event loop"
+# It looks better.
+{
+  package AnyEvent;
+  sub loop { $_[0]->condvar->recv }
+}
 
 
 # TODO - become aware of $ENV{VW_CONFIG}
 my $config = App::VW->config;
+our $VW_PID_FILE = "/var/run/vw.pid";
+
 
 sub continuity_server {
   my ($app) = @_;
-  # XXX - temporary stub
-  AnyEvent->condvar->recv;
-
-  # TODO
-  # - create pid file
-  # - require vw_harness.pl
-  #   + load modules
-  #   + load Squatting::On::Continuity
-  #   + loop forever
+  chdir($app->{dir});
+  my $harness = "$app->{dir}/vw_harness.pl";
+  my $pid_file = "$app->{dir}/$app->{port}.pid";
+  if (-e $harness) {
+    pid_file($pid_file, $app->{port});
+    local @ARGV = ($app->{port});
+    eval { do $harness; };
+    # ...and never return.
+    # But if it fails for some reason...
+    warn $@; # XXX - use a logging facility instead
+    unlink($pid_file);
+  }
 }
 
 sub continuity_daemon {
   my ($app) = @_;
   defined(my $pid = fork)     or die "Can't fork: $!";
   unless ($pid) {
-    chdir '/'                 or die "Can't chdir to /: $!";
-    open STDIN,  '/dev/null'  or die "Can't read /dev/null: $!";
-    open STDOUT, '>/dev/null' or die "Can't write to /dev/null: $!";
-    # *DON'T* start new session => follow the leader
-    #setsid                    or die "Can't start a new session: $!";
-    open STDERR, '>&STDOUT'   or die "Can't dup stdout: $!";
     continuity_server($app);
   } else {
-    select(undef, undef, undef, 0.25);
     return { app => $app, pid => $pid };
   }
 }
@@ -78,7 +81,7 @@ sub leader_daemon {
     setsid                    or die "Can't start a new session: $!";
     open STDERR, '>&STDOUT'   or die "Can't dup stdout: $!";
 
-    # daemons
+    # list of continuity_daemons
     my @continuities;
 
     # /etc/init.d/vw stop
@@ -88,7 +91,7 @@ sub leader_daemon {
       sleep 0.25;
       kill 9 => @pids;
       sleep 0.25;
-      unlink('/var/run/vw.pid');
+      unlink($VW_PID_FILE);
       exit 0;
     });
 
@@ -99,10 +102,20 @@ sub leader_daemon {
 
     # start a bunch of continuity_daemons
     my @apps = @{ $config->{apps} };
-    @continuities = map { continuity_daemon($_) } @apps;
+    @continuities = 
+      # ^daemonize
+      map { continuity_daemon($_) } 
+      # ^cluster
+      map { 
+        my $app = $_;
+        map { +{ %$app, port => $app->{port} + ($_ - 1) } } 
+          (1 .. $app->{cluster_size});
+      } 
+      # ^apps
+      @apps;
 
     # loop forever
-    AnyEvent->condvar->recv;
+    AnyEvent->loop;
 
   } else {
     select(undef, undef, undef, 0.25);
@@ -128,5 +141,5 @@ sub pid_file {
 #_____________________________________________________________________________
 
 my $ld = leader_daemon($config);
-my $pf = pid_file('/var/run/vw.pid', $ld->{pid});
+my $pf = pid_file($VW_PID_FILE, $ld->{pid});
 
