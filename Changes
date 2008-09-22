@@ -3,8 +3,6 @@ FUTURE
   + centos (and other redhat derivatives)
   + gentoo (they have a nice init system)
 * What about *BSDs and systems that don't use anything resembling SysV init?
-* Add rudimentary logging to vw-bus (probably via Sys::Syslog).
-* Add a more informative post-install message to `vw install`.
 * Don't hardcode the path to perl in the init scripts.  Use $Config{perlpath}.
 * Optionally downgrade user to someone who isn't root.
 
@@ -12,4 +10,5 @@ FUTURE
 - App::VW             - a deployment system for Squatting+Continuity apps.
 - provided bin/vw     - utility for installing vw-related scripts.
 - provided bin/vw-bus - daemon that watches over continuity processes.
+- added rudimentary logging to vw-bus (via Sys::Syslog).
 - initial support for debian-derivatives with SysV init systems.
