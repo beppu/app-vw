@@ -77,6 +77,7 @@ sub continuity_daemon {
   } else {
     $app->{pid}      = $pid;
     $app->{pid_file} = "$app->{dir}/$app->{port}.pid";
+    syslog(LOG_INFO, "$pid => $app->{pid_file}");
     pid_file($app->{pid_file}, $pid);
     return $app;
   }
@@ -87,6 +88,7 @@ sub leader_daemon {
   my ($config) = @_;
   defined(my $pid = fork)     or die "Can't fork: $!";
   unless ($pid) {
+    openlog('vw', 'ndelay,pid', LOG_USER);
     chdir '/'                 or die "Can't chdir to /: $!";
     open STDIN,  '/dev/null'  or die "Can't read /dev/null: $!";
     open STDOUT, '>/dev/null' or die "Can't write to /dev/null: $!";
@@ -98,22 +100,27 @@ sub leader_daemon {
 
     # /etc/init.d/vw stop
     my $stop = AnyEvent->signal(signal => 'INT', cb => sub {
+      syslog(LOG_INFO, 'Stopping Continuity Daemons');
       my @pids = map { $_->{pid} } @continuities;
+      syslog(LOG_INFO, $_) for (@pids);
       kill 15 => @pids;
       sleep 0.25;
       kill 9 => @pids;
       sleep 0.25;
       unlink map { $_->{pid_file} } @continuities;
       unlink($config->{pid_file});
+      closelog();
       exit 0;
     });
 
     # /etc/init.d/vw reload
     my $reload = AnyEvent->signal(signal => 'HUP', cb => sub {
       # What should it mean to "reload" vw?
+      syslog(LOG_INFO, 'Received SIGHUP -- Now what?');
     });
 
     # start a bunch of continuity_daemons
+    syslog(LOG_INFO, 'Starting Continuity Daemons');
     my @apps = @{ $config->{apps} };
     @continuities = 
       # ^daemonize
@@ -139,9 +146,9 @@ sub leader_daemon {
 
 
 ### how to construct $pid_file for continuity apps
-# my $app_name = lc $app->{app};
-# $app_name =~ s/::/_/g;
-# my $pid_file = "$app->{dir}/${app_name}_$app->{port}.pid";
+# my $app_name =  lc $app->{app};
+# $app_name    =~ s/::/_/g;
+# my $pid_file =  "$app->{dir}/${app_name}_$app->{port}.pid";
 
 
 # main
