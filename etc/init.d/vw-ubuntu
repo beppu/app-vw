@@ -42,11 +42,11 @@ case "$1" in
 
   restart|force-reload)
         echo -n "Restarting $DESC: "
-        start-stop-daemon --stop --quiet --pidfile \
-                $PIDFILE --exec $PERL --startas $DAEMON
+        start-stop-daemon --stop --signal 2 --quiet --pidfile $PIDFILE \
+                --exec $PERL --startas $DAEMON
         sleep 1
-        start-stop-daemon --start --quiet --pidfile \
-                $PIDFILE --exec $PERL --startas $DAEMON -- $DAEMON_OPTS
+        start-stop-daemon --start --quiet --pidfile $PIDFILE \
+                --exec $PERL --startas $DAEMON -- $DAEMON_OPTS
         echo "$NAME."
         ;;
   reload)
