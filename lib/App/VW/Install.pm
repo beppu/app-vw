@@ -64,12 +64,17 @@ App::VW::Install - install init script and config dir for vw
 
 =head1 SYNOPSIS
 
+Installing the init script and creating the config directory
+
+  sudo vw install
+
 =head1 DESCRIPTION
 
-=head1 API
+Running the install command will copy an init script into
+F</etc/init.d/vw> and it will create a config directory in
+F</etc/vw> that C<vw setup> will populate with YAML files.
 
-=head2 App->options
-
-=head2 $vw->run
+The format of these YAML files is described in the documentation
+for L<App::VW>.
 
 =cut
