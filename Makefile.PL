@@ -18,6 +18,7 @@ WriteMakefile(
     'AnyEvent'        => 0,
     'Event'           => 0,
     'Squatting'       => 0.52,
+    'Sys::Syslog'     => 0.27,
   },
   dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
   clean               => { FILES => 'App-VW-*' },
