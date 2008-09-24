@@ -19,7 +19,7 @@ sub run {
   };
   my $app_name = lc $server_description->{app};
   $app_name =~ s/::/_/g;
-  my $yaml_file = "$config->{dir}/$app_name.yml";
+  my $yaml_file = "$config->{etc}/$app_name.yml";
   print "Creating $yaml_file.\n" if ($self->{verbose});
   DumpFile($yaml_file, $server_description) || die($!);
   my $harness_file = "$cwd/vw_harness.pl";

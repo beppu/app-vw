@@ -38,7 +38,8 @@ To disable vw from starting upon boot:
 
   sudo update-rc.d -f vw remove
 
-|};
+|;
+};
 
 sub run {
   my ($self) = @_;
