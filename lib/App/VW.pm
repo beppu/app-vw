@@ -228,6 +228,8 @@ L<Squatting>, L<Squatting::On::Continuity>, L<Continuity>, L<App::CLI>
 
 L<http://code.whytheluckystiff.net/camping/>
 
+L<http://github.com/fauna/rv/tree/master>
+
 =head1 AUTHOR
 
 John BEPPU C<< <beppu@cpan.org> >>
