@@ -58,12 +58,16 @@ sub continuity_server {
   chdir($app->{dir});
   my $harness = "$app->{dir}/vw_harness.pl";
   if (-e $harness) {
-    local @ARGV = ($app->{port});
+    local @ARGV = %$app;
     eval { do $harness; };
     # ...and never return.
     # But if it fails for some reason...
-    syslog(LOG_ERR, "$app->{app}: $@");
+    my $error = $@ || "$harness could not be started.";
+    syslog(LOG_ERR, "$app->{app}: $error");
+  } else {
+    syslog(LOG_ERR, "$app->{app}: $harness was not found.");
   }
+  exit 1;
 }
 
 # a process for continuity to run in
@@ -73,8 +77,10 @@ sub continuity_daemon {
   unless ($pid) {
     continuity_server($app);
   } else {
+    my $app_name     =  lc $app->{app}; $app_name =~ s/::/_/g;
+    my $pid_file     =  "$app->{dir}/$app_name-$app->{port}.pid";
     $app->{pid}      = $pid;
-    $app->{pid_file} = "$app->{dir}/$app->{port}.pid";
+    $app->{pid_file} = $pid_file;
     syslog(LOG_INFO, "$pid => $app->{pid_file}");
     pid_file($app->{pid_file}, $pid);
     return $app;
@@ -142,17 +148,9 @@ sub leader_daemon {
   }
 }
 
-
-### how to construct $pid_file for continuity apps
-# my $app_name =  lc $app->{app};
-# $app_name    =~ s/::/_/g;
-# my $pid_file =  "$app->{dir}/${app_name}_$app->{port}.pid";
-
-
 # main
 #_____________________________________________________________________________
-
-my $ld = leader_daemon($config);
+leader_daemon($config);
 
 __END__
 
