@@ -9,7 +9,6 @@ lib/App/VW/Install.pm
 lib/App/VW/Restart.pm
 lib/App/VW/Setup.pm
 lib/App/VW/Start.pm
-lib/App/VW/Status.pm
 lib/App/VW/Stop.pm
 Makefile.PL
 MANIFEST
