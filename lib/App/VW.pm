@@ -9,11 +9,10 @@ use YAML 'LoadFile';
 our $VERSION = '0.01';
 
 our $config = {
-  etc  => '/etc/vw',
-  perl => $Config{perlpath},
-  init => '/etc/init.d/vw',
-
-  pid_file => '/var/run/vw.pid',
+  etc       => '/etc/vw',
+  perl      => $Config{perlpath},
+  init      => '/etc/init.d/vw',
+  pid_file  => '/var/run/vw.pid',
 };
 
 sub config {
