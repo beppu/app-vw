@@ -8,4 +8,18 @@ use base 'App::CLI::Command::Help';
 
 App::VW::Help - summary of vw commands
 
+=head1 SYNOPSIS
+
+Usage:
+
+  vw help [SUBCOMMAND]
+
+Getting a list of subcommands:
+
+  vw help
+
+Getting help on the C<install> command:
+
+  vw help install
+
 =cut

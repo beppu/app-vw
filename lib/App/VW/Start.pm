@@ -14,4 +14,16 @@ sub run {
 
 App::VW::Start - start all configured Squatting apps
 
+=head1 SYNOPSIS
+
+Usage:
+
+  vw start
+
+=head1 DESCRIPTION
+
+This is a wrapper around:
+
+  sudo /etc/init.d/vw start
+
 =cut

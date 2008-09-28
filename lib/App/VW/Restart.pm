@@ -14,4 +14,16 @@ sub run {
 
 App::VW::Restart - restart all configured Squatting apps
 
+=head1 SYNOPSIS
+
+Usage:
+
+  vw restart
+
+=head1 DESCRIPTION
+
+This is a wrapper around:
+
+  sudo /etc/init.d/vw restart
+
 =cut

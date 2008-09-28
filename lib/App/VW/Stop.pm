@@ -14,4 +14,16 @@ sub run {
 
 App::VW::Stop - stop all configured Squatting apps
 
+=head1 SYNOPSIS
+
+Usage:
+
+  vw stop
+
+=head1 DESCRIPTION
+
+This is a wrapper around:
+
+  sudo /etc/init.d/vw stop
+
 =cut
