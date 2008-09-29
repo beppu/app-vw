@@ -62,11 +62,11 @@ App::VW - a deployment system for Squatting+Continuity web apps
 
 =head1 SYNOPSIS
 
-Installing the init script and creating the config dir:
+First, install the vw system:
 
   sudo vw install
 
-Preparing an app for vw:
+Then, setup some apps for vw to manage:
 
   cd /path/to/squatting/app
   sudo vw setup App --port=5000 --cluster-size=1
@@ -253,6 +253,15 @@ If you'd like to use App::VW with other Linux distros or other Unixes, send me a
 email, and we can work on adding support for your system.
 
 =head1 SEE ALSO
+
+=head2 Subcommands
+
+L<App::VW::Help>,
+L<App::VW::Install>,
+L<App::VW::Setup>,
+L<App::VW::Restart>,
+L<App::VW::Start>,
+L<App::VW::Stop>
 
 =head2 Utilities
 
