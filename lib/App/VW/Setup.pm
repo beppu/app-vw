@@ -71,7 +71,7 @@ Usage:
 
   vw setup [OPTION]... <App>
 
-Example:
+Example:  How to setup a Squatting app called 'Bavl'
 
   # Go to the directory your squatting app is in.
   cd /www/towr.of.bavl.org
