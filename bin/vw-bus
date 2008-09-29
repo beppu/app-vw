@@ -104,7 +104,7 @@ sub leader_daemon {
 
     # /etc/init.d/vw stop
     my $stop = AnyEvent->signal(signal => 'INT', cb => sub {
-      syslog(LOG_INFO, 'Stopping Continuity Daemons');
+      syslog(LOG_INFO, 'Stopping Daemons');
       my @pids = map { $_->{pid} } @continuities;
       syslog(LOG_INFO, $_) for (@pids);
       kill 15 => @pids;
@@ -124,7 +124,7 @@ sub leader_daemon {
     });
 
     # start a bunch of continuity_daemons
-    syslog(LOG_INFO, 'Starting Continuity Daemons');
+    syslog(LOG_INFO, 'Starting Daemons');
     my @apps = @{ $config->{apps} };
     @continuities = 
       # ^daemonize
