@@ -69,7 +69,7 @@ Installing the init script and creating the config dir:
 Preparing an app for vw:
 
   cd /path/to/squatting/app
-  sudo vw setup --port=5000 --cluster-size=1
+  sudo vw setup App --port=5000 --cluster-size=1
   vi vw_harness.pl
 
 Starting and stopping vw:
@@ -144,8 +144,11 @@ hasn't been setup to respond to it yet, so it's currently a NO-OP.
 =head2 /etc/vw/*.yml
 
 These L<YAML> files tell C<vw> how to start up a Squatting application.
-These are created for you when you run C<vw setup>.
-Here's how one might look like:
+The data in these YAML files are passed to the F<vw_harness.pl> files
+in key/value form via @ARGV.  (my %opts = @ARGV)
+
+These files are created for you when you run C<vw setup>, and here's how one
+might look like:
 
   ---
   app: Bavl
@@ -178,17 +181,26 @@ This is the number of processes to start for the app.
 Note that if port is 2000 and cluster_size is 4, then 4 processes will
 be started up, and they'll handle ports 2000, 2001, 2002, and 2003.
 
+B<It's up to you to make sure the ports on your system don't overlap!!!>
+
 =back
+
+Feel free to edit this file and even add more configuration variables
+if that would be helpful to you.
 
 =head2 vw_harness.pl
 
 This is the script that that actually starts up the L<Squatting::On::Continuity>
 web server.  This is also created for you when you run C<vw setup>.
 
-It gets C<port> and C<document_root> passed to it in C<@ARGV>.  The script's
-job is to start up a web server on the given port using the specified
-document_root.  Some apps don't care about document_root, so ignoring it
-allowed when appropriate.  However, port should not be ignored.
+It gets the contents of the app's YAML file in C<@ARGV> in key/value form.
+That means the F<vw_harness.pl> scripts can conveniently get their YAML config
+via code like this:
+
+  my %opts = @ARGV;
+
+The script's job is to start up a server that loops forever.  It B<DOES NOT> have
+to fork or daemonize itself, because the vw system is already doing that for you.
 
 Feel free to edit this script as much as you want.  Any and all initialization
 for your web app can be done here.
@@ -196,19 +208,43 @@ for your web app can be done here.
 =head1 REVELATION
 
 Although C<vw> was intended to be a system for deploying Squatting applications
-on top of Continuity, it can actually deploy any perl-based web server you
-want.  If you wanted to deploy a pure Continuity app, it wouldn't be too hard
-to write a F<vw_harness.pl> that did just that.  The same goes for
-HTTP::Server::Simple or even Catalyst.  If your goal is to reverse-proxy to a
-cluster of perl-based HTTP servers, C<vw> can manage this cluster for you.
+on top of Continuity, it can actually deploy any kind of server you want.
+If you wanted to deploy a pure Continuity app, it wouldn't be too hard
+to write a F<vw_harness.pl> to do just that:
+
+=head2 A vw_harness.pl for a Continuity App
+
+  use strict;
+  use warnings;
+  use Continuity;
+  my %opts = @ARGV;
+  Continuity->new(
+    port     => $opts{port}, 
+    callback => sub { 
+      my ($cr) = @_;
+      $cr->print("Hello, World!");
+    }
+  )->loop;
+
+=head2 A vw_harness.pl for haXe Video
+
+The servers you start via vw don't even have to be written in Perl.  For example,
+we could start B<haXe Video> using a simple F<vw_harness.pl> like this:
+
+  use strict;
+  use warnings;
+  my %opts = @ARGV;
+  open(STDOUT, ">>", "haxevideo.log");
+  open(STDERR, ">>", "haxevideo.log");
+  exec("neko server.n");
 
 Creating a custom F<vw_harness.pl> is the key.
 
 =head1 BUGS
 
-Currently, C<vw> only works on Debian and Debian-derivatives (like Ubuntu).  It
-may also work on other Linux systems that use SysV init for starting daemons at
-boot up, but that's not guaranteed.
+Currently, C<vw> is only known to work on Debian and Debian-derivatives (like
+Ubuntu).  By chance, it may also work on other Linux systems that use SysV init
+for starting daemons at boot up, but that's not guaranteed.
 
 If you'd like to use App::VW with other Linux distros or other Unixes, send me an
 email, and we can work on adding support for your system.
@@ -232,5 +268,32 @@ L<http://github.com/fauna/rv/tree/master>
 =head1 AUTHOR
 
 John BEPPU C<< <beppu@cpan.org> >>
+
+=head1 COPYRIGHT
+
+Copyright (c) 2008 John BEPPU E<lt>beppu@cpan.orgE<gt>.
+
+=head2 The "MIT" License
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
 
 =cut

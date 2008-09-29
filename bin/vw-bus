@@ -77,8 +77,8 @@ sub continuity_daemon {
   unless ($pid) {
     continuity_server($app);
   } else {
-    my $app_name     =  lc $app->{app}; $app_name =~ s/::/_/g;
-    my $pid_file     =  "$app->{dir}/$app_name-$app->{port}.pid";
+    my $app_name     = lc $app->{app}; $app_name =~ s/::/_/g;
+    my $pid_file     = "$app->{dir}/$app_name-$app->{port}.pid";
     $app->{pid}      = $pid;
     $app->{pid_file} = $pid_file;
     syslog(LOG_INFO, "$pid => $app->{pid_file}");
