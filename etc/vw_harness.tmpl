@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use [% app %] [% plugins %] 'On::Continuity';
+use [% app %] qw( [% modules %] On::Continuity );
+my %opts = @ARGV;
 App->init;
-App->continue(port => $vw::port);
-# vim:ft=perl
+App->continue(port => $opts{port});
