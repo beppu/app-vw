@@ -3,6 +3,7 @@ bin/vw-bus
 Changes
 edit
 etc/init.d/vw-ubuntu
+etc/vw_harness.tmpl
 lib/App/VW.pm
 lib/App/VW/Help.pm
 lib/App/VW/Install.pm
@@ -15,5 +16,6 @@ MANIFEST
 MANIFEST.SKIP
 README
 t/00-load.t
+t/01-app-vw.t
 t/boilerplate.t
 t/pod.t
