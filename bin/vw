@@ -19,24 +19,55 @@ Usage:
 
 =head1 DESCRIPTION
 
-vw : squatting :: rv : camping
+C<vw> is the front-end to L<App::VW> which is a deployment system for Squatting
+apps.
 
-=head1 COMMANDS
+=head1 SUBCOMMANDS
 
-=head2 help
+=head2 help [SUBCOMMAND]
+
+Invoked by itself, it displays a list of subcommands.
+
+  vw help
+
+If given a subcommand, it'll display an abbreviated version of that
+subcommand's documentation.
+
+  vw help install
 
 =head2 install
 
-=head2 setup
+The install command copies an init script to F</etc/init.d/vw> and creates
+a directory for configuration files called F</etc/vw>.
 
-=head2 status
+  sudo vw install
+
+=head2 setup <App> [OPTION]...
+
+This command is used to setup a Squatting app for deployment through C<vw>.
+You should go to the directory your Squatting app will be run from and
+run this command.
+
+B<Example>: Setting up the ChatterBox app on port 5000
+
+  cd /www/chatterbox.com
+  sudo vw setup ChatterBox --port 5000
 
 =head2 start
 
+This is the same as: C</etc/init.d/vw start>.
+
 =head2 stop
+
+This is the same as: C</etc/init.d/vw start>.
 
 =head2 restart
 
+This is the same as: C</etc/init.d/vw stop>.
+
+=head1 SEE ALSO
+
+L<App::VW>, L<vw-bus>
 
 =head1 AUTHOR
 

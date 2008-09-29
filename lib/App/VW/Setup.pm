@@ -69,7 +69,7 @@ App::VW::Setup - setup a Squatting app for deployment via Continuity
 
 Usage:
 
-  vw setup [OPTION]... <App>
+  vw setup <App> [OPTION]...
 
 Example:  How to setup a Squatting app called 'Bavl'
 
@@ -77,7 +77,7 @@ Example:  How to setup a Squatting app called 'Bavl'
   cd /www/towr.of.bavl.org
 
   # Run the setup command
-  sudo vw setup Bavl
+  sudo vw setup Bavl --port 6000
 
   # You should have 2 new files in your system, now:
   /etc/vw/bavl.yml

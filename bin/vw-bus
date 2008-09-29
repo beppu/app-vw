@@ -166,7 +166,10 @@ Usage:
 
 =head1 DESCRIPTION
 
-This is the daemon that F</etc/init.d/vw> starts.  The initial process serves
-as a leader for a bunch of child processes.
+This is the daemon that F</etc/init.d/vw> starts.  It starts one leader process
+that watches over many child processes.  The child processes that are started
+are defined by the configuration files in F</etc/vw/*.yml>.
+
+To shutdown the leader process and all its children, send the process a SIGINT.
 
 =cut
