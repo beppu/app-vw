@@ -24,6 +24,6 @@ Usage:
 
 This is a wrapper around:
 
-  sudo /etc/init.d/vw restart
+  /etc/init.d/vw restart
 
 =cut

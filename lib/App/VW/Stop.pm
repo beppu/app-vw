@@ -24,6 +24,6 @@ Usage:
 
 This is a wrapper around:
 
-  sudo /etc/init.d/vw stop
+  /etc/init.d/vw stop
 
 =cut
