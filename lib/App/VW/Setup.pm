@@ -6,7 +6,6 @@ use Cwd;
 use base 'App::VW::Command';
 use File::ShareDir 'module_dir';
 use YAML 'DumpFile';
-use Data::Dump 'pp';
 
 my $config = App::VW->config;
 
@@ -22,8 +21,11 @@ sub options {
 
 sub run {
   my ($self, $app) = @_;
+
+  die("Please specify an App to start.\n")
+    if (not defined $app);
+
   my $cwd = getcwd;
-  warn pp $self;
   my $cluster_description = {
     app          => $app,
     dir          => $cwd,
@@ -82,5 +84,35 @@ Example:
   /www/towr.of.bavl.org/vw_harness.pl
 
 =head1 DESCRIPTION
+
+The C<setup> command installs 2 files into your system so that vw will be able
+to start your app as a daemonized server at boot time.
+
+=head2 /etc/vw/$app.yml
+
+=head2 vw_harness.pl
+
+
+=head1 OPTIONS
+
+=over 4
+
+=item -p, --port=PORT
+
+This is the port that the first process in the cluster will listen to.  Its
+default value is C<4000>, but you should really specify one yourself.
+
+=item -s, --size=SIZE
+
+This is the number of processes in the cluster.  Its default value is C<1>.
+
+=item -m, --modules=PLUGIN
+
+This option is used to specify which plugins you want your Squatting app to
+load before starting.  You can use this option multiple times.
+
+B<Example>:
+
+  sudo vw setup ChatterBox -m With::AccessTrace -m With::Log --port 9000
 
 =cut

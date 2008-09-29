@@ -77,14 +77,17 @@ Starting and stopping vw:
   sudo /etc/init.d/vw start
   sudo /etc/init.d/vw stop
 
-Making vw start up at boot time (on Debian-like systems):
+Making vw start up at boot time (on Debian-derived systems):
 
   sudo update-rc.d vw defaults
 
-Disabling vw from starting up at boot (on Debian-like systems):
+Disabling vw from starting up at boot (on Debian-derived systems):
 
   sudo update-rc.d -f vw remove
 
+Watching vw's syslog output (on Debian-derived systems):
+
+  sudo tail -f /var/log/user.log
 
 =head1 DESCRIPTION
 
