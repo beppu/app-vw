@@ -86,12 +86,8 @@ Example:
 =head1 DESCRIPTION
 
 The C<setup> command installs 2 files into your system so that vw will be able
-to start your app as a daemonized server at boot time.
-
-=head2 /etc/vw/$app.yml
-
-=head2 vw_harness.pl
-
+to start your app as a daemonized server at boot time.  See L<App::VW> for
+details.
 
 =head1 OPTIONS
 
