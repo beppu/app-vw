@@ -44,7 +44,7 @@ sub run {
   print "Creating $yaml_file.\n" if ($self->{verbose});
   DumpFile($yaml_file, $cluster_description) || die($!);
 
-  my $src = module_dir('App::VW') . "/etc/vw_harness.tmpl"; 
+  my $src = module_dir('App::VW') . "/etc/vw_harness.tmpl";
   my $harness_file = "$cwd/vw_harness.pl";
   print "Creating $harness_file.\n" if ($self->{verbose});
 
@@ -110,5 +110,7 @@ load before starting.  You can use this option multiple times.
 B<Example>:
 
   sudo vw setup ChatterBox -m With::AccessTrace -m With::Log --port 9000
+
+=back
 
 =cut
